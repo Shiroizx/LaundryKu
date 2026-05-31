@@ -1,0 +1,138 @@
+# Implementation Plan
+
+- [ ] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Tab Reactivation Navigation Loading
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists
+  - **Scoped PBT Approach**: For deterministic bugs, scope the property to the concrete failing case(s) to ensure reproducibility
+  - Test implementation details from Bug Condition in design:
+    - Simulate tab becoming hidden (document.visibilityState = 'hidden')
+    - Wait for session token expiration (or manually expire session)
+    - Simulate tab becoming visible (document.visibilityState = 'visible')
+    - Trigger navigation to dashboard pages ('/customer/orders', '/customer/bookings', '/customer/payments', '/customer/profile', '/customer/tracking')
+    - Assert that navigation completes within 3000ms (expected behavior)
+    - Assert that data loads successfully (expected behavior)
+    - Assert that session is refreshed after tab becomes visible (expected behavior)
+  - The test assertions should match the Expected Behavior Properties from design:
+    - Property 1: For any navigation event where isBugCondition(navigationEvent) = true, the system SHALL automatically refresh the Supabase session when the tab becomes visible, ensuring that subsequent navigation completes successfully and data loads within 1-3 seconds
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bug exists)
+  - Document counterexamples found to understand root cause:
+    - Navigation after tab inactivity results in infinite loading spinner
+    - Middleware getUser() call hangs or times out with expired session
+    - Console errors showing 401 Unauthorized or session expired messages
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: 1.1, 1.2, 1.3_
+
+- [ ] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Normal Navigation Behavior
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-buggy inputs:
+    - Navigate between dashboard pages while tab is continuously active
+    - Perform hard refresh (Ctrl + Shift + R) on dashboard pages
+    - Load customer dashboard initially after login
+    - Interact with same-page features (filtering, sorting)
+    - Navigate after short tab inactivity (5 minutes, session still valid)
+  - Write property-based tests capturing observed behavior patterns from Preservation Requirements:
+    - Property 2: For any navigation event where NOT isBugCondition(navigationEvent), the system SHALL produce exactly the same behavior as the original application
+    - Test that active tab navigation continues to work with fast loading (< 3 seconds)
+    - Test that hard refresh continues to load pages correctly
+    - Test that initial page load after login continues to work
+    - Test that real-time Supabase subscriptions continue to receive updates
+    - Test that same-page interactions don't trigger unnecessary session refreshes
+  - Property-based testing generates many test cases for stronger guarantees
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [ ] 3. Fix for dashboard tab switch loading bug
+
+  - [ ] 3.1 Implement session refresh on tab reactivation in src/lib/supabase/client.ts
+    - Create new exported function `refreshSupabaseSession()` that calls `supabase.auth.refreshSession()` to obtain a new access token
+    - Implement browser visibility API listener that detects when document becomes visible (`document.visibilityState === 'visible'`)
+    - Automatically call `refreshSupabaseSession()` when tab becomes visible
+    - Initialize visibility change listener when browser client singleton is created
+    - Handle refresh errors gracefully - if session refresh fails (refresh token expired), redirect to login page with session expiration message
+    - Implement debouncing to prevent multiple rapid refresh calls if user switches tabs quickly (e.g., 500ms debounce)
+    - Add cleanup for event listener to prevent memory leaks
+    - _Bug_Condition: isBugCondition(input) where input.isNavigation = true AND input.targetPage IN ['/customer/orders', '/customer/bookings', '/customer/payments', '/customer/profile', '/customer/tracking'] AND tabWasInactive(input.timestamp) AND sessionTokenExpired() AND NOT sessionRefreshedAfterTabActivation()_
+    - _Expected_Behavior: For any navigation event where isBugCondition(navigationEvent) = true, the fixed application SHALL automatically refresh the Supabase session when the tab becomes visible, ensuring that subsequent navigation completes successfully and data loads within 1-3 seconds_
+    - _Preservation: Navigation between dashboard pages while tab remains continuously active, hard refresh functionality, initial page loads, real-time subscriptions, and same-page interactions must remain unchanged_
+    - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 3.4, 3.5_
+
+  - [ ] 3.2 Add session validation in src/hooks/use-customer-dashboard.ts
+    - Import `refreshSupabaseSession()` from client module
+    - Before fetching data in refresh callback, validate that session is not expired by checking `expires_at` timestamp
+    - If session is expired, trigger session refresh before proceeding with data fetching
+    - Add specific error handling for authentication errors (401, 403) that indicates session expiration
+    - On authentication error, trigger session refresh or redirect to login
+    - Improve error logging for debugging session-related issues
+    - _Bug_Condition: isBugCondition(input) where sessionTokenExpired() during data fetch_
+    - _Expected_Behavior: Session validation ensures data fetching uses valid authentication tokens_
+    - _Preservation: Normal data fetching behavior when session is valid must remain unchanged_
+    - _Requirements: 1.2, 2.1, 2.2, 3.1, 3.4_
+
+  - [ ] 3.3 Add timeout and error handling in src/middleware.ts
+    - Before calling `supabase.auth.getUser()`, attempt to refresh session if access token is expired
+    - Wrap `supabase.auth.getUser()` call in timeout (5 seconds) to prevent indefinite hanging
+    - If timeout occurs, redirect to login page with appropriate error message
+    - Add detailed logging for session validation failures to help diagnose production issues
+    - Ensure middleware doesn't hang on expired tokens
+    - _Bug_Condition: isBugCondition(input) where middleware encounters expired session during navigation_
+    - _Expected_Behavior: Middleware handles expired sessions gracefully without hanging_
+    - _Preservation: Middleware authentication and role-based access control for valid sessions must remain unchanged_
+    - _Requirements: 1.1, 1.3, 2.1, 2.3, 3.1, 3.2_
+
+  - [ ] 3.4 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Tab Reactivation Navigation Loading
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - Verify that:
+      - Session is automatically refreshed when tab becomes visible
+      - Navigation completes successfully within 1-3 seconds after tab reactivation
+      - Data is fetched and displayed correctly
+      - No infinite loading states occur
+      - Console shows successful session refresh logs
+    - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3_
+
+  - [ ] 3.5 Verify preservation tests still pass
+    - **Property 2: Preservation** - Normal Navigation Behavior
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Verify that:
+      - Active tab navigation continues to work with fast loading (< 3 seconds)
+      - Hard refresh continues to load pages correctly
+      - Initial page load after login continues to work
+      - Real-time Supabase subscriptions continue to receive updates
+      - Same-page interactions don't trigger unnecessary session refreshes
+      - No performance degradation in normal navigation scenarios
+    - Confirm all tests still pass after fix (no regressions)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [ ] 4. Checkpoint - Ensure all tests pass
+  - Run all bug condition exploration tests - verify they pass
+  - Run all preservation property tests - verify they pass
+  - Run any existing unit tests and integration tests - verify no regressions
+  - Test manually in browser:
+    - Login to customer dashboard
+    - Switch to another tab for 2+ hours (or manually expire session in DevTools)
+    - Return to dashboard tab
+    - Navigate to orders page - verify data loads within 3 seconds
+    - Navigate to bookings page - verify data loads normally
+    - Navigate to payments page - verify data loads normally
+    - Verify no infinite loading states occur
+  - Test edge cases:
+    - Short tab inactivity (5 minutes) - verify normal behavior
+    - Rapid tab switching - verify debouncing works
+    - Session refresh during active data fetching - verify no race conditions
+    - Expired refresh token - verify redirect to login
+  - Check browser console for any errors or warnings
+  - Verify session refresh logs appear when tab becomes visible after inactivity
+  - If any issues arise, ask the user for guidance before proceeding
