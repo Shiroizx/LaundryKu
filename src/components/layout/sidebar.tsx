@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -97,16 +98,27 @@ export function Sidebar({ role, userName, isMobileMenuOpen, onCloseMobile, isCol
                     isMobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 w-64'
                 )}
             >
-                {/* Logo */}
                 <div className="flex-none flex items-center justify-between h-20 px-5 border-b border-slate-200/50">
-                    <div className={cn('flex items-center gap-3 overflow-hidden transition-all duration-300', isCollapsed ? 'w-0 opacity-0 md:w-auto md:opacity-100' : 'w-auto opacity-100', isCollapsed ? 'md:w-0 md:opacity-0' : '')}>
-                        <Link href={`/${role}`} className="flex items-center gap-3" onClick={onCloseMobile}>
-                            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-400 flex items-center justify-center shadow-lg shadow-cyan-500/20 shrink-0">
-                                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                                </svg>
-                            </div>
-                            <span className="font-bold text-xl bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent whitespace-nowrap">LaundryKu</span>
+                    <div className="flex items-center overflow-hidden transition-all duration-300">
+                        <Link href={`/${role}`} className="flex items-center" onClick={onCloseMobile}>
+                            {/* Logo Only (visible when collapsed on desktop) */}
+                            <Image 
+                                src="/assets/logoonly.png" 
+                                alt="LaundryKu" 
+                                width={40} 
+                                height={40} 
+                                className={cn("h-10 w-10 shrink-0 object-contain transition-all duration-300", isCollapsed ? "block" : "hidden")} 
+                                priority
+                            />
+                            {/* Full Logo (visible when expanded) */}
+                            <Image 
+                                src="/assets/logotextlandscape.png" 
+                                alt="LaundryKu" 
+                                width={140} 
+                                height={36} 
+                                className={cn("h-9 w-auto shrink-0 object-contain transition-all duration-300", isCollapsed ? "hidden" : "block")} 
+                                priority
+                            />
                         </Link>
                     </div>
                     <button

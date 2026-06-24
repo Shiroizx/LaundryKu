@@ -135,6 +135,11 @@ export function useEmployeeDashboard(): UseEmployeeDashboardReturn {
                 { event: '*', schema: 'public', table: 'bookings' },
                 () => { refresh() }
             )
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'payments' },
+                () => { refresh() }
+            )
             .subscribe()
 
         return () => {

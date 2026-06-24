@@ -1,6 +1,13 @@
 import type { Metadata } from 'next'
+import { Outfit } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
   title: 'LaundryKu - Sistem Informasi Manajemen Laundry',
@@ -13,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className="antialiased" suppressHydrationWarning>
+    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning className={`${outfit.variable}`}>
+      <body className="antialiased font-sans" suppressHydrationWarning>
         <Providers>
           {children}
         </Providers>

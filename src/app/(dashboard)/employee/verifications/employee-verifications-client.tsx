@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatDate } from '@/lib/supabase/database-types'
 import { verifyPaymentAction } from '@/app/(dashboard)/owner/verifications/actions' // Reuse action
+import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
 export function EmployeeVerificationsClient({ initialPayments }: { initialPayments: any[] }) {
     const router = useRouter()
@@ -16,6 +17,27 @@ export function EmployeeVerificationsClient({ initialPayments }: { initialPaymen
     useEffect(() => {
         setPayments(initialPayments)
     }, [initialPayments])
+
+    useEffect(() => {
+        const supabase = getSupabaseBrowserClient() as any;
+        const channelId = `employee-verifications-${Math.random().toString(36).substring(2, 11)}`;
+        
+        const channel = supabase
+            .channel(channelId)
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'payments' },
+                () => {
+                    console.log('Payment changed, refreshing verifications list...');
+                    router.refresh();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [router]);
 
     const handleAction = async (id: string, action: 'paid' | 'failed') => {
         if (action === 'failed' && !confirm('Yakin ingin menolak pembayaran ini? Pelanggan harus mengunggah ulang bukti.')) {

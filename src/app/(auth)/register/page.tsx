@@ -94,33 +94,33 @@ export default function RegisterPage() {
 
     return (
         <div 
-            className={`w-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl shadow-cyan-100/50 rounded-3xl p-6 sm:p-8 transition-all duration-500 ease-out ${
+            className={`w-full transition-all duration-500 ease-out ${
                 isMounted && !isExiting 
-                    ? 'opacity-100 translate-y-0 scale-100' 
-                    : 'opacity-0 translate-y-8 scale-95'
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-4'
             }`}
         >
             {/* Header */}
-            <div className="mb-6">
-                <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Daftar Akun Baru</h1>
-                <p className="text-slate-400 mt-1.5 font-medium text-sm">Bergabung dengan LaundryKu hari ini</p>
+            <div className="mb-10">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Buat Akun</h1>
+                <p className="text-slate-500 mt-2 text-sm sm:text-base">Bergabung dengan LaundryKu dalam hitungan detik.</p>
             </div>
 
             {error && (
-                <div className="mb-5 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3 animate-fade-in">
-                    <svg className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 animate-fade-in">
+                    <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <p className="text-sm font-semibold text-rose-600">{error}</p>
+                    <p className="text-sm font-medium text-red-700">{error}</p>
                 </div>
             )}
 
             {success && (
-                <div className="mb-5 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-start gap-3 animate-fade-in">
+                <div className="mb-8 p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-start gap-3 animate-fade-in">
                     <svg className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div className="text-sm font-semibold text-emerald-700">
+                    <div className="text-sm font-medium text-emerald-700">
                         {needsConfirmation ? (
                             <p>
                                 <strong>Registrasi berhasil!</strong><br />
@@ -135,16 +135,16 @@ export default function RegisterPage() {
 
             {/* Debug Info */}
             {debug && (
-                <div className="mb-5 p-3 bg-amber-50 border border-amber-100 rounded-2xl animate-fade-in">
+                <div className="mb-8 p-3 bg-amber-50 border border-amber-100 rounded-xl animate-fade-in">
                     <p className="text-xs text-amber-700 font-mono whitespace-pre-wrap">
                         {debug}
                     </p>
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Full Name */}
-                <div className={`transition-all duration-700 delay-50 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`transition-all duration-700 delay-50 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                     <Input
                         label="Nama Lengkap"
                         type="text"
@@ -152,14 +152,14 @@ export default function RegisterPage() {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="h-11 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white"
+                        className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm"
                     />
                 </div>
 
                 {/* Email & Phone grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Email */}
-                    <div className={`transition-all duration-700 delay-100 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className={`transition-all duration-700 delay-75 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                         <Input
                             label="Email"
                             type="email"
@@ -167,12 +167,12 @@ export default function RegisterPage() {
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             required
-                            className="h-11 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white"
+                            className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm"
                         />
                     </div>
 
                     {/* Phone */}
-                    <div className={`transition-all duration-700 delay-150 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className={`transition-all duration-700 delay-100 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                         <Input
                             label="Nomor Telepon"
                             type="tel"
@@ -180,15 +180,15 @@ export default function RegisterPage() {
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             required
-                            className="h-11 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white"
+                            className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm"
                         />
                     </div>
                 </div>
 
                 {/* Password fields grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Password */}
-                    <div className={`relative transition-all duration-700 delay-200 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className={`relative transition-all duration-700 delay-150 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                         <Input
                             label="Password"
                             type={showPassword ? 'text' : 'password'}
@@ -196,12 +196,12 @@ export default function RegisterPage() {
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             required
-                            className="h-11 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white pr-10"
+                            className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm pr-12"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-2 top-[34px] w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                            className="absolute right-2 top-[34px] w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                         >
                             {showPassword ? (
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,7 +217,7 @@ export default function RegisterPage() {
                     </div>
 
                     {/* Confirm Password */}
-                    <div className={`transition-all duration-700 delay-250 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className={`transition-all duration-700 delay-200 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                         <Input
                             label="Konfirmasi Password"
                             type="password"
@@ -225,39 +225,39 @@ export default function RegisterPage() {
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                             required
-                            className="h-11 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white"
+                            className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm"
                         />
                     </div>
                 </div>
 
                 {/* Agreement */}
-                <div className={`flex items-start gap-2.5 transition-all duration-700 delay-300 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`flex items-start gap-3 transition-all duration-700 delay-250 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                     <input
                         type="checkbox"
                         id="terms"
                         checked={agreedToTerms}
                         onChange={(e) => setAgreedToTerms(e.target.checked)}
-                        className="mt-1 w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer transition-colors"
+                        className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer transition-colors"
                     />
                     <label htmlFor="terms" className="text-sm text-slate-500 font-medium leading-relaxed">
                         Saya menyetujui{' '}
-                        <Link href="/terms" className="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors">
+                        <Link href="/terms" className="text-slate-900 hover:underline decoration-slate-300 underline-offset-4 transition-all">
                             Syarat dan Ketentuan
                         </Link>
                         {' '}serta{' '}
-                        <Link href="/privacy" className="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors">
+                        <Link href="/privacy" className="text-slate-900 hover:underline decoration-slate-300 underline-offset-4 transition-all">
                             Kebijakan Privasi
                         </Link>
                     </label>
                 </div>
 
                 {/* Submit button */}
-                <div className={`pt-2 transition-all duration-700 delay-350 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`pt-4 transition-all duration-700 delay-300 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                     <Button
                         type="submit"
                         isLoading={isLoading}
                         disabled={!agreedToTerms || success}
-                        className="w-full h-12 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-600/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-none"
+                        className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-none transition-all duration-300 hover:scale-[0.98] cursor-pointer"
                     >
                         Daftar Sekarang
                     </Button>
@@ -265,13 +265,13 @@ export default function RegisterPage() {
             </form>
 
             {/* Login Link */}
-            <div className={`mt-6 text-center text-sm transition-all duration-700 delay-400 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <p className="text-slate-400 font-medium">
+            <div className={`mt-10 text-center text-sm transition-all duration-700 delay-350 ${isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                <p className="text-slate-500 font-medium">
                     Sudah punya akun?{' '}
                     <button
                         type="button"
                         onClick={() => handleNavigate('/login')}
-                        className="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors cursor-pointer"
+                        className="text-slate-900 font-semibold hover:underline decoration-slate-300 underline-offset-4 transition-all cursor-pointer"
                     >
                         Masuk di sini
                     </button>

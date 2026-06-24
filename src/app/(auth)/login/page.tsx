@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -57,38 +56,38 @@ export default function LoginPage() {
                 window.location.href = redirectPath
             }, 300)
         } else {
-            setError(result.error || 'Login gagal')
+            setError(result.error || 'Gagal masuk. Periksa kembali email dan password Anda.')
         }
     }
 
     return (
         <div 
-            className={`w-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-2xl shadow-cyan-100/50 rounded-3xl p-8 sm:p-10 transition-all duration-500 ease-out ${
+            className={`w-full transition-all duration-500 ease-out ${
                 isMounted && !isExiting 
-                    ? 'opacity-100 translate-y-0 scale-100' 
-                    : 'opacity-0 translate-y-8 scale-95'
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-4'
             }`}
         >
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Selamat Datang</h1>
-                <p className="text-slate-400 mt-2 font-medium text-sm">Masuk ke akun LaundryKu Anda</p>
+            <div className="mb-10">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Selamat Datang</h1>
+                <p className="text-slate-500 mt-2 text-sm sm:text-base">Masukkan kredensial Anda untuk mengakses akun.</p>
             </div>
 
             {error && (
-                <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3 animate-fade-in">
-                    <svg className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 animate-fade-in">
+                    <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <p className="text-sm font-semibold text-rose-600">{error}</p>
+                    <p className="text-sm font-medium text-red-700">{error}</p>
                 </div>
             )}
 
-            <form suppressHydrationWarning onSubmit={handleSubmit} className="space-y-5">
+            <form suppressHydrationWarning onSubmit={handleSubmit} className="space-y-6">
                 {/* Email Input */}
                 <div 
                     className={`transition-all duration-700 delay-75 ${
-                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                     }`}
                 >
                     <Input
@@ -98,14 +97,14 @@ export default function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="h-12 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white"
+                        className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm"
                     />
                 </div>
 
                 {/* Password Input */}
                 <div 
-                    className={`relative transition-all duration-700 delay-150 ${
-                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                    className={`relative transition-all duration-700 delay-100 ${
+                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                     }`}
                 >
                     <Input
@@ -115,12 +114,12 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="h-12 px-4 rounded-xl border-slate-200 focus:ring-cyan-500 focus:border-transparent focus:ring-2 transition-all bg-white pr-12"
+                        className="h-12 px-4 rounded-xl border-slate-200 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white shadow-sm pr-12"
                     />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-[38px] w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                        className="absolute right-2 top-[34px] w-10 h-10 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                         aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                     >
                         {showPassword ? (
@@ -138,22 +137,22 @@ export default function LoginPage() {
 
                 {/* Remember & Forgot */}
                 <div 
-                    className={`flex items-center justify-between text-sm transition-all duration-700 delay-225 ${
-                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                    className={`flex items-center justify-between text-sm transition-all duration-700 delay-150 ${
+                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                     }`}
                 >
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                    <label className="flex items-center gap-2.5 cursor-pointer group">
                         <input 
                             suppressHydrationWarning
                             type="checkbox" 
-                            className="w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer transition-colors" 
+                            className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer transition-colors" 
                         />
-                        <span className="text-slate-500 group-hover:text-slate-700 transition-colors font-medium">Ingat saya</span>
+                        <span className="text-slate-500 group-hover:text-slate-900 transition-colors font-medium">Ingat saya</span>
                     </label>
                     <button
                         type="button"
                         onClick={() => handleNavigate('/forgot-password')}
-                        className="font-semibold text-cyan-600 hover:text-cyan-700 transition-colors cursor-pointer"
+                        className="font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                     >
                         Lupa password?
                     </button>
@@ -161,14 +160,14 @@ export default function LoginPage() {
 
                 {/* Submit Button */}
                 <div 
-                    className={`pt-2 transition-all duration-700 delay-300 ${
-                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                    className={`pt-4 transition-all duration-700 delay-200 ${
+                        isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                     }`}
                 >
                     <Button 
                         type="submit" 
                         isLoading={isLoading}
-                        className="w-full h-12 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-600/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer border-none"
+                        className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-none transition-all duration-300 hover:scale-[0.98] cursor-pointer"
                     >
                         Masuk
                     </Button>
@@ -177,16 +176,16 @@ export default function LoginPage() {
 
             {/* Register Link */}
             <div 
-                className={`mt-8 text-center text-sm transition-all duration-700 delay-375 ${
-                    isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                className={`mt-10 text-center text-sm transition-all duration-700 delay-300 ${
+                    isMounted && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                 }`}
             >
-                <p className="text-slate-400 font-medium">
+                <p className="text-slate-500 font-medium">
                     Belum punya akun?{' '}
                     <button
                         type="button"
                         onClick={() => handleNavigate('/register')}
-                        className="text-cyan-600 hover:text-cyan-700 font-semibold transition-colors cursor-pointer"
+                        className="text-slate-900 font-semibold hover:underline decoration-slate-300 underline-offset-4 transition-all cursor-pointer"
                     >
                         Daftar sekarang
                     </button>
